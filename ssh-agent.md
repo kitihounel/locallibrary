@@ -107,7 +107,7 @@ The first thing we are going to solve using the `config` file is to avoid having
 Host github.com
   HostName github.com
   User git
-  IdentityFile ~/.ssh/id_ed25519
+  IdentityFile ~/.ssh/id_ed25519 # Make sure to replace this by the name of your private key file
   IdentitiesOnly yes
 ```
 
