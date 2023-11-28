@@ -2,7 +2,7 @@
 
 ## Installing Django
 
-Once you've created a virtual environment, and called workon to enter it, you can use pip3 to install Django.
+Once you've created a virtual environment, and called `workon` to enter it, you can use pip3 to install Django.
 
 ```bash
 pip3 install django~=4.2 # check the current stable version when doing this 

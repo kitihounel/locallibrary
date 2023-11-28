@@ -1,4 +1,4 @@
-## Setting for `__pycache__` Folder Location
+# Setting for `__pycache__` Folder Location
 
 If you don't like having `__pycache__` folders everywhere in your projects, there is simple setting (starting from Python 3.8)
 to keep them in a specific location.
