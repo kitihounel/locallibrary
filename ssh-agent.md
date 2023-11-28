@@ -5,6 +5,17 @@ This document describes how to generate SSH keys and add them to `ssh-agent`.
 The content in this file comes from two main sources.
 - [Github doc](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 - [FOSS Linux](https://www.fosslinux.com/122405/how-to-install-and-use-ssh-agent-on-ubuntu.htm)
+- [freeCodeCamp](https://www.freecodecamp.org/news/the-ultimate-guide-to-ssh-setting-up-ssh-keys/)
+
+## Main sections
+
+- [Generating a new SSH key](#generating-a-new-ssh-key)
+- [Adding your SSH key to the ssh-agent](#adding-your-ssh-key-to-the-ssh-agent)
+- [Auto-start SSH agent](#auto-start-ssh-agent)
+- [List keys added to ssh-agent](#list-keys-added-to-ssh-agent)
+- [Remove all keys from ssh-agent](#remove-all-keys-from-ssh-agent)
+- [Manage multiple keys](#manage-multiple-ssh-keys)
+- [Useful configuration examples](#useful-configuration-examples)
 
 ## Generating a new SSH key
 
@@ -69,27 +80,80 @@ For bash users, the file is `~/.bashrc`. For Zsh users, it is `~/.zshrc`.
 echo 'eval "$(ssh-agent -s)"' >> ~/.bashrc
 ```
 
-## Make ssh-agent automatically add the key on demand
-
-SSH supports adding a key to the agent on first use (since version 7.2).
-
-You can enable that feature by putting the following into `~/.ssh/config`:
-
-```
-AddKeysToAgent confirm
-```
-
-This also works when using derivative tools, such as git.
-
-From the From the [7.2 changelog](https://www.openssh.com/txt/release-7.2):
-
-```
-ssh(1): Add an AddKeysToAgent client option which can be set to 'yes', 'no', 'ask', or 'confirm', and defaults to 'no'.
-When enabled, a private key that is used during authentication will be added to ssh-agent if it is running (with confirmation enabled if set to 'confirm').
-```
-
 ## List keys added to ssh-agent
 
 ```sh
 ssh-add -l
 ```
+
+## Remove all keys from ssh-agent
+
+```sh
+ssh-add -D
+```
+
+## Manage multiple SSH keys
+
+Though it's considered good practice to have only one public-private key pair per device, sometimes you need to use
+multiple keys or you have unorthodox key names. For example, you might be using one SSH key pair for working on your
+company's internal projects, but you might be using a different key for accessing a client's servers. On top of that,
+you might be using a different key pair for accessing your own private server.
+
+The solution is to automate adding keys, store passwords, and to specify which key to use when accessing certain servers.
+
+The first thing we are going to solve using the `config` file is to avoid having to add custom-named SSH keys using `ssh-add`. Assuming your private SSH key is named `~/.ssh/id_ed25519`, add following to the config file:
+
+```
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519
+  IdentitiesOnly yes
+```
+
+Next, make sure that `~/.ssh/id_ed25519` is not in ssh-agent by opening another terminal and running the following command:
+
+```sh
+ssh-add -D
+```
+
+Now if you try cloning a GitHub repository, your config file will use the key at `~/.ssh/id_ed25519`.
+
+## Useful Configuration Examples
+
+```
+Host bitbucket-corporate
+  HostName bitbucket.org
+  User git
+  IdentityFile ~/.ssh/id_ed25519_corp
+  IdentitiesOnly yes
+```
+
+Now you can use `git clone git@bitbucket-corporate:COMPANY/project.git`.
+
+```
+Host bitbucket-personal
+  HostName bitbucket.org
+  User git
+  IdentityFile ~/.ssh/id_ed25519_personal
+  IdentitiesOnly yes
+```
+
+Now you can use `git clone git@bitbucket-personal:USERNAME/other-pi-project.git`.
+
+```
+Host myserver
+  HostName ssh.username.com
+  Port 1111
+  IdentityFile ~/.ssh/id_ed25519_personal
+  IdentitiesOnly yes
+  User username
+  IdentitiesOnly yes
+```
+
+Now you can SSH into your server using `ssh myserver`. You no longer need to enter a port and username every time
+you SSH into your private server.
+
+**IMPORTANT**
+
+For more information about the content the SSH `config` file, see [here](https://www.ssh.com/academy/ssh/config).
