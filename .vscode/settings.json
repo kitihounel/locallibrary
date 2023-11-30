@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/home/kooler/.virtualenvs/locallibrary/bin/python",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  }
+}
